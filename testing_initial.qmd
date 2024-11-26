@@ -1,0 +1,44 @@
+---
+title: "Testing the Data"
+format: html
+---
+
+# initial data testing
+```{python}
+import pandas as pd
+
+new_data = pd.read_csv("calls_all.csv")
+
+# testing date-time range
+new_data["Original Time Queued"] = pd.to_datetime(new_data["Original Time Queued"])
+
+earliest_time = new_data["Original Time Queued"].min()
+latest_time = new_data["Original Time Queued"].max()
+
+print(f"The earliest time is {earliest_time}, the latest is {latest_time}")
+```
+
+# creating new data - time differences
+```{python}
+import pandas as pd
+
+# time difference calculation
+new_data["Arrived Time"] = pd.to_datetime(new_data["Arrived Time"], utc= True)
+new_data["Original Time Queued"] = pd.to_datetime(new_data["Original Time Queued"], utc= True)
+
+new_data["Time_Diff_Minutes"] = (new_data["Arrived Time"] - new_data["Original Time Queued"]).dt.total_seconds()/60
+new_data["Time_Diff_Minutes"] = new_data["Time_Diff_Minutes"].fillna(0)
+```
+
+# checking general average response time
+```{python}
+average_response_time = new_data["Time_Diff_Minutes"].mean()
+print(f"average response time overall is {average_response_time: .2f} minutes")
+```
+
+# checking by call type
+```{python}
+grouping_911 = new_data.groupby("Call Type")
+emergency_response_time = grouping_911.get_group("911")["Time_Diff_Minutes"].mean()
+print(f"average response time for 911 calls is {emergency_response_time: .2f} minutes")
+```
