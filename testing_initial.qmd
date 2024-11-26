@@ -110,8 +110,50 @@ print(f"average response time for 911 calls is {emergency_response_time: .2f} mi
 # average response time by location
 
 ```{python}
+#look at which beats have the most calls
+beat_counts=new_data.groupby("Beat").size().sort_values(ascending=False).reset_index(name="count")
 
+#create a new df looking at avg response time by beats
+response_beat=new_data.groupby("Beat")["Time_Diff_Minutes"].mean(
+
+).sort_values(
+    ascending=False).reset_index()
+#create a chart
+alt.Chart(response_beat).mark_bar().encode(
+    alt.X("Beat",sort=response_beat["Beat"].tolist()),
+    alt.Y("Time_Diff_Minutes",title="Total Response Time")
+).properties(title="Overall Response Time By Beat")
+
+#now look at just 911 calls
+calls_911=new_data[new_data["Call Type"]=="911"]
+#groupby beat to see what avg response time is per beat
+response_beat_911=calls_911.groupby("Beat")["Time_Diff_Minutes"].mean(
+
+).sort_values(
+    ascending=False).reset_index()
+#going to need this later to create a chart displaying the 
+#avg response time
+emergency_response_time_df = pd.DataFrame(
+    {'emergency_response_time': [emergency_response_time]})
+
+#create initial chart for 911 calls by beat, and response time
+chart_beat_911=alt.Chart(response_beat_911).mark_bar().encode(
+    alt.X("Beat",sort=response_beat_911["Beat"].tolist()),
+    alt.Y("Time_Diff_Minutes",title="Total Response Time")
+).properties(title="Response Time By Beat for 911 Calls")
+
+#create the horizontal line representing avg response time for 
+#911 calls regardless of beat
+avg_response_line = alt.Chart(emergency_response_time_df).mark_rule(color="red").encode(
+    y=alt.Y("emergency_response_time:Q", title="Average Response Time")  # Quantitative data type
+)
+
+chart_w_average=chart_beat_911+avg_response_line
+chart_w_average.show()
 ```
+
+Final Chart shows that B1, B2, B3, U3, J2, J3, J1, N2, D3, U1, Q2, N3, Q1,U2, C2, D2, L3, L2 all perform worse on response time than the average.
+
 
 # average response time by call type
 
