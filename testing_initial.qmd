@@ -6,9 +6,15 @@ format: html
 # initial data testing
 ```{python}
 import pandas as pd
+import zipfile
 
-new_data = pd.read_csv("calls_all.csv")
+data_path = "/Users/neilstein/Documents/Academic/Fall 24/Python II/Final Project/final_project/calls_all.csv.zip"
+with zipfile.ZipFile(data_path, "r") as zip_ref:
+    with zip_ref.open("calls_all.csv") as file:
+        new_data = pd.read_csv(file)
+```
 
+```{python}
 # testing date-time range
 new_data["Original Time Queued"] = pd.to_datetime(new_data["Original Time Queued"])
 
