@@ -59,6 +59,18 @@ latest_time = new_data["Original Time Queued"].max()
 print(f"The earliest time is {earliest_time}, the latest is {latest_time}")
 ```
 
+# initial data clean up
+```{python}
+import pandas as pd
+
+# removing rows with blurred lat-long that is not usable
+new_data = new_data[new_data["Blurred_Longitude"] != -1]
+new_data = new_data[new_data["Blurred_Longitude"] != 0]
+
+# removing rows without an arrival time
+new_data = new_data.dropna(subset= ["Arrived Time"])
+```
+
 # creating new data - time differences
 ```{python}
 import pandas as pd
@@ -109,12 +121,3 @@ alt.Chart(grouping_911).mark_bar().encode(
 
 ```
 
-# initial data clean up
-```{python}
-import pandas as pd
-
-# removing rows with blurred lat-long that is not usable
-new_data = new_data[new_data["Blurred_Longitude"] != -1]
-new_data = new_data[new_data["Blurred_Longitude"] != 0]
-new_data = new_data.dropna(subset= ["Arrived Time"])
-```
