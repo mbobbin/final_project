@@ -8,11 +8,46 @@ format: html
 import pandas as pd
 import zipfile
 
-data_path = "/Users/neilstein/Documents/Academic/Fall 24/Python II/Final Project/final_project/calls_all.csv.zip"
+data_path = r"C:\Users\Mitch\Documents\GitHub\final_project\calls_all.csv.zip"
 with zipfile.ZipFile(data_path, "r") as zip_ref:
     with zip_ref.open("calls_all.csv") as file:
         new_data = pd.read_csv(file)
 ```
+
+# Data Structure
+```{python}
+new_data.shape
+new_data.columns
+new_data["Event Clearance Description"].unique()
+new_data["Call Type"].unique()
+new_data["Priority"].unique()
+new_data["Initial Call Type"].nunique()
+new_data["Final Call Type"].nunique()
+
+new_data["Precinct"].unique()
+len(new_data[new_data["Precinct"]=="UNKNOWN"])
+
+new_data["Sector"].unique()
+new_data["Beat"].unique()
+
+```
+
+5,926,156 unique calls (rows)
+13 colums for each observation
+
+Event Clearance Description appears to indicate what an officer did to resolve a phone call.
+
+Call Type is nominal but unclear what the dispositions are for some.
+Priority is a quantitative variable from 1-9. has 712 nas also.
+
+Initial Call Type is very messy and we could recode. lots of different dispositions that we could aggregate into common categories. Same with Final Call Type. 326 and 436 respectively unique values.
+
+West, Southwest, East, South, North, and Unknown are the only values for Precinct. There's 52,381 Unknown entries - not a lot.
+
+Sector has a number of values that seem to be names? Need to investigate what this means if a data dictionary is handy.
+
+Quite a few beats also.
+
 
 # testing date-time range
 ```{python}
@@ -29,8 +64,13 @@ print(f"The earliest time is {earliest_time}, the latest is {latest_time}")
 import pandas as pd
 
 # time difference calculation
-new_data["Arrived Time"] = pd.to_datetime(new_data["Arrived Time"], utc= True)
-new_data["Original Time Queued"] = pd.to_datetime(new_data["Original Time Queued"], utc= True)
+new_data["Arrived Time"] = pd.to_datetime(
+    new_data["Arrived Time"], 
+    format="%m/%d/%Y %I:%M:%S %p", 
+    utc=True
+)
+
+new_data["Original Time Queued"] = pd.to_datetime(new_data["Original Time Queued"], format="%m/%d/%Y %I:%M:%S %p", utc= True)
 
 new_data["Time_Diff_Minutes"] = (new_data["Arrived Time"] - new_data["Original Time Queued"]).dt.total_seconds()/60
 new_data["Time_Diff_Minutes"] = new_data["Time_Diff_Minutes"].fillna(0)
@@ -48,3 +88,24 @@ grouping_911 = new_data.groupby("Call Type")
 emergency_response_time = grouping_911.get_group("911")["Time_Diff_Minutes"].mean()
 print(f"average response time for 911 calls is {emergency_response_time: .2f} minutes")
 ```
+
+# average response time by location
+
+```{python}
+
+```
+
+# average response time by call type
+
+
+```{python}
+import altair as alt
+grouping_911 = new_data.groupby("Call Type").size().reset_index(name="count")
+
+alt.Chart(grouping_911).mark_bar().encode(
+    alt.X("Call Type"),
+    alt.Y("count")
+).properties(title="Number of Each Call Types in Seattle")
+
+```
+
