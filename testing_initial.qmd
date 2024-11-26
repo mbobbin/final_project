@@ -110,6 +110,7 @@ print(f"average response time for 911 calls is {emergency_response_time: .2f} mi
 # average response time by location
 
 ```{python}
+import altair as alt
 #look at which beats have the most calls
 beat_counts=new_data.groupby("Beat").size().sort_values(ascending=False).reset_index(name="count")
 
@@ -139,7 +140,7 @@ emergency_response_time_df = pd.DataFrame(
 #create initial chart for 911 calls by beat, and response time
 chart_beat_911=alt.Chart(response_beat_911).mark_bar().encode(
     alt.X("Beat",sort=response_beat_911["Beat"].tolist()),
-    alt.Y("Time_Diff_Minutes",title="Total Response Time")
+    alt.Y("Time_Diff_Minutes",title="Response Time (Minutes)")
 ).properties(title="Response Time By Beat for 911 Calls")
 
 #create the horizontal line representing avg response time for 
@@ -169,3 +170,43 @@ alt.Chart(grouping_911).mark_bar().encode(
 
 ```
 
+# grouping initial call type for 911 calls 
+There are 249 unique values for this. It would be nice if we could group in a way that provides some clarity about what kind of calls are receiving fast response and which ones are not. Then we can evaluate if its proportionate to the crime, and we could provide granularity. Maybe even use to filter a map on a dashboard by the response times based upon our new call types
+```{python}
+unique_call_types=calls_911["Initial Call Type"].unique()
+
+calls_911.groupby("Initial Call Type").size().sort_values(ascending=False).reset_index(name="count").head(20)
+
+#create new initial call category
+import numpy as np
+
+# Define conditions and corresponding labels
+conditions = [
+    calls_911["Initial Call Type"].str.contains("DV", case=False, na=False),
+    calls_911["Initial Call Type"].str.contains("narcotics", case=False, na=False),
+    calls_911["Initial Call Type"].str.contains("Theft|property|Burg|Robbery|Trespass|Arson", case=False, na=False),
+    calls_911["Initial Call Type"].str.contains("ASLT|fight|bomb|shots", case=False, na=False),
+    calls_911["Initial Call Type"].str.contains("Nuisance|Noise", case=False, na=False),
+    calls_911["Initial Call Type"].str.contains("suicide|Wellness Check|Welfare Check|Overdose|emotional crisis", case=False, na=False),
+    calls_911["Initial Call Type"].str.contains("Suspicious", case=False, na=False),
+    calls_911["Initial Call Type"].str.contains("MVC|Traffic|DUI", case=False, na=False),
+    calls_911["Initial Call Type"].str.contains("lewd|Rape|Sex", case=False, na=False)
+]
+
+labels = [
+    "domestic violence",
+    "drug crime",
+    "property crime",
+    "violent crime",
+    "noise complaint",
+    "wellness check",
+    "community suspicion",
+    "traffic safety",
+    "sex crime"
+]
+
+# Apply transformations using np.select
+calls_911["Call Category"] = np.select(conditions, labels, default="other")
+
+check_call_cat=calls_911[["Call Category","Initial Call Type"]]
+```
