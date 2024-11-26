@@ -69,6 +69,12 @@ new_data = new_data[new_data["Blurred_Longitude"] != 0]
 
 # removing rows without an arrival time
 new_data = new_data.dropna(subset= ["Arrived Time"])
+
+# filtering down to the list of beats that are in Seattle city limits (per their website)
+seattle_beats = pd.read_csv("Seattle_PD_beats.csv")
+seattle_beats_list = seattle_beats["beat"].unique()
+
+new_data = new_data[new_data["Beat"].isin(seattle_beats_list)]
 ```
 
 # creating new data - time differences
