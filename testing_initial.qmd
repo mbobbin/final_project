@@ -14,8 +14,8 @@ with zipfile.ZipFile(data_path, "r") as zip_ref:
         new_data = pd.read_csv(file)
 ```
 
-```{python}
 # testing date-time range
+```{python}
 new_data["Original Time Queued"] = pd.to_datetime(new_data["Original Time Queued"])
 
 earliest_time = new_data["Original Time Queued"].min()
