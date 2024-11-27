@@ -212,13 +212,6 @@ check_call_cat=calls_911[["Call Category","Initial Call Type"]]
 ```
 
 
-
-
-
-
-
-
-
 # NLP Extra Credit - Name Recognition
 Since our dataset from the city of Seattle on food-based businesses does not come with any kind of attribution, we will be using Natural Language Processing to isolate the food venues likely to serve pizzas. 
 
@@ -253,5 +246,10 @@ restaurant_df["cleaned_name"] = restaurant_df["Name"].apply(clean_text)
 restaurant_df["ital_check"] = restaurant_df["cleaned_name"].apply(is_ital_restaurant)
 
 ital_restaurant_df = restaurant_df[restaurant_df["ital_check"]]
+
+# extra filter to ensure only Seattle city proper
+ital_restaurant_df["city_name"] = ital_restaurant_df["City"].apply(clean_text)
+ital_restaurant_df = ital_restaurant_df[ital_restaurant_df["city_name"]== "seattle"]
+
 print(ital_restaurant_df.head(5))
 ```
