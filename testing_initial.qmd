@@ -8,7 +8,7 @@ format: html
 import pandas as pd
 import zipfile
 
-data_path = r"C:\Users\Mitch\Documents\GitHub\final_project\calls_all.csv.zip"
+data_path = r"calls_all.csv.zip"
 with zipfile.ZipFile(data_path, "r") as zip_ref:
     with zip_ref.open("calls_all.csv") as file:
         new_data = pd.read_csv(file)
@@ -209,4 +209,49 @@ labels = [
 calls_911["Call Category"] = np.select(conditions, labels, default="other")
 
 check_call_cat=calls_911[["Call Category","Initial Call Type"]]
+```
+
+
+
+
+
+
+
+
+
+# NLP Extra Credit - Name Recognition
+Since our dataset from the city of Seattle on food-based businesses does not come with any kind of attribution, we will be using Natural Language Processing to isolate the food venues likely to serve pizzas. 
+
+```{python}
+import spacy
+import pandas as pd
+
+# setup steps
+restaurant_df = pd.read_csv("Businesses_Food-King_County_20241024.csv")
+nlp = spacy.load("it_core_news_sm")
+# common pizza/Italian restaurant key words and top 20 most common Italian last names (source: https://surnamesinitaly.com/italian-surnames-usa/)
+ital_keywords = ["pizza", "pasta", "risotto","trattoria", "ristorante", "cucina", "italiano", "siciliano", "toscano", "romano", "saltoro", "russo", "marino", "bruno", "rossi", "esposito", "gallo", "caruso", "rizzo", "greco", "giordano", "gabagool"]
+
+# cleaning the names to ease NLP processing
+def clean_text(text):
+  text = text.lower()
+  text = text.strip()
+  text = text.replace("[^\w\s]", "")
+  return text
+
+# NLP function
+def is_ital_restaurant(restaurant_name):
+  cleaned_name = clean_text(restaurant_name)
+  doc = nlp(cleaned_name)
+  for token in doc:
+      if token.text in ital_keywords:
+          return True
+  return False
+
+# applying functions and final filter
+restaurant_df["cleaned_name"] = restaurant_df["Name"].apply(clean_text)
+restaurant_df["ital_check"] = restaurant_df["cleaned_name"].apply(is_ital_restaurant)
+
+ital_restaurant_df = restaurant_df[restaurant_df["ital_check"]]
+print(ital_restaurant_df.head(5))
 ```
