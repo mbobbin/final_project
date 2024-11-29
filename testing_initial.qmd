@@ -48,10 +48,23 @@ Sector has a number of values that seem to be names? Need to investigate what th
 
 Quite a few beats also.
 
+```{python}
+import altair as alt
+grouping_911 = new_data.groupby("Call Type").size().reset_index(name="count")
+
+alt.Chart(grouping_911).mark_bar().encode(
+    alt.X("Call Type"),
+    alt.Y("count")
+).properties(title="Number of Each Call Types in Seattle")
+
+```
+
 
 # testing date-time range
 ```{python}
-new_data["Original Time Queued"] = pd.to_datetime(new_data["Original Time Queued"])
+new_data["Original Time Queued"] = pd.to_datetime(new_data["Original Time Queued"], 
+    format="%m/%d/%Y %I:%M:%S %p", 
+    utc=True)
 
 earliest_time = new_data["Original Time Queued"].min()
 latest_time = new_data["Original Time Queued"].max()
@@ -159,17 +172,6 @@ Final Chart shows that B1, B2, B3, U3, J2, J3, J1, N2, D3, U1, Q2, N3, Q1,U2, C2
 # average response time by call type
 
 
-```{python}
-import altair as alt
-grouping_911 = new_data.groupby("Call Type").size().reset_index(name="count")
-
-alt.Chart(grouping_911).mark_bar().encode(
-    alt.X("Call Type"),
-    alt.Y("count")
-).properties(title="Number of Each Call Types in Seattle")
-
-```
-
 # grouping initial call type for 911 calls 
 There are 249 unique values for this. It would be nice if we could group in a way that provides some clarity about what kind of calls are receiving fast response and which ones are not. Then we can evaluate if its proportionate to the crime, and we could provide granularity. Maybe even use to filter a map on a dashboard by the response times based upon our new call types
 ```{python}
@@ -209,6 +211,39 @@ labels = [
 calls_911["Call Category"] = np.select(conditions, labels, default="other")
 
 check_call_cat=calls_911[["Call Category","Initial Call Type"]]
+
+
+# Calculate Q1, Q3, and IQR
+q1 = calls_911['Time_Diff_Minutes'].quantile(0.25)
+q3 = calls_911['Time_Diff_Minutes'].quantile(0.75)
+iqr = q3 - q1
+
+# Define the acceptable range
+lower_bound = q1 - 1.5 * iqr
+upper_bound = q3 + 1.5 * iqr
+
+print(f"Lower bound: {lower_bound}, Upper bound: {upper_bound}")
+
+filtered_calls_911 = calls_911[
+    (calls_911['Time_Diff_Minutes'] >= lower_bound) &
+    (calls_911['Time_Diff_Minutes'] <= upper_bound)
+]
+
+print(f"Original data size: {len(calls_911)}, Filtered data size: {len(filtered_calls_911)}")
+
+call_category_chart = alt.Chart(filtered_calls_911).mark_boxplot().encode(
+    x='Call Category:N',
+    y='Time_Diff_Minutes:Q'
+)
+call_category_chart
+
+call_category_chart2=alt.Chart(calls_911).mark_bar().encode(
+    x='Call Category:N',
+    y=alt.X('mean(Time_Diff_Minutes):Q',title="Average Response Time(Minutes)")
+).properties(title="Average Police Response Time by Call Category in Seattle")
+
+call_category_chart2.show()
+#Now I want to transpose this over census, and geographic data
 ```
 
 
