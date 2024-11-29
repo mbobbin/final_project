@@ -246,6 +246,22 @@ call_category_chart2.show()
 #Now I want to transpose this over census, and geographic data
 ```
 
+# Transposing over geographic data
+```{python}
+import geopandas as gpd
+
+shapefile_path = r"C:\Users\Mitch\Documents\GitHub\final_project\Seattle_PD_beats.zip"
+
+# Load the shapefile
+gdf = gpd.read_file(f"zip://{shapefile_path}")
+
+gdf = gdf.rename(columns={'beat': 'Beat'})
+
+calls_911_agg=calls_911.groupby(["Beat","Call Category"]).mean("Time_Diff_Minutes").reset_index()
+
+calls_911_geo=pd.merge(calls_911_agg,gdf,on="Beat",how="outer")
+#drop the points and shapes over map of seattle:
+```
 
 # NLP Extra Credit - Name Recognition
 Since our dataset from the city of Seattle on food-based businesses does not come with any kind of attribution, we will be using Natural Language Processing to isolate the food venues likely to serve pizzas. 
