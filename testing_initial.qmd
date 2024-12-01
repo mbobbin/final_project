@@ -259,8 +259,130 @@ gdf = gdf.rename(columns={'beat': 'Beat'})
 
 calls_911_agg=calls_911.groupby(["Beat","Call Category"]).mean("Time_Diff_Minutes").reset_index()
 
-calls_911_geo=pd.merge(calls_911_agg,gdf,on="Beat",how="outer")
-#drop the points and shapes over map of seattle:
+shapefile_path = r"C:\Users\Mitch\Documents\GitHub\final_project\census_seattle.zip"
+
+# Read the shapefile from the zip
+gdf_census = gpd.read_file(f"zip://{shapefile_path}")
+from shapely.geometry import Point
+
+# Convert calls_911 to a GeoDataFrame
+calls_911['geometry'] = calls_911.apply(lambda row: Point(row['Blurred_Longitude'], row['Blurred_Latitude']), axis=1)
+calls_911_geo = gpd.GeoDataFrame(calls_911, geometry='geometry')
+
+# Set the CRS to match the latitude/longitude system (WGS 84)
+calls_911_geo = calls_911_geo.set_crs("EPSG:4326")
+
+
+# Filter columns with '20' in their names or the 'geometry' column
+# Get the first 4 columns
+first_columns = gdf_census.iloc[:, :2]
+
+# Get the last 32 columns
+last_columns = gdf_census.iloc[:, -33:]
+
+# Combine them into a new DataFrame
+gdf_census_filtered = pd.concat([first_columns, last_columns], axis=1)
+
+# Verify the result
+print(gdf_census_filtered.head())
+
+gdf_census_filtered = gdf_census_filtered.rename(columns={
+    "TRACT_20_N": "tract_number",
+    "F2020_PL_d": "total_population",
+    "F2020_PL_1":"one_race_pop",
+    "F2020_PL_2":"white_pop",
+    "F2020_PL_3":"black_pop",
+    "F2020_PL_4":"native_am_alaskan_pop",
+    "F2020_PL_5":"asian_pop",
+    "F2020_PL_6":"pacific_island_pop",
+    "F2020_PL_7":"other_race_pop",
+    "F2020_PL_8":"two_races_pop",
+    "F2020_PL_9":"latino_pop"
+
+})
+
+# Dictionary of column mappings
+# List of demographic columns to calculate percentages for
+demographic_columns = [
+    "one_race_pop",
+    "white_pop",
+    "black_pop",
+    "native_am_alaskan_pop",
+    "asian_pop",
+    "pacific_island_pop",
+    "other_race_pop",
+    "two_races_pop",
+    "latino_pop"
+]
+
+# Calculate percentage for each column and create a new column
+for col in demographic_columns:
+    gdf_census_filtered[f"{col}_perc"] = gdf_census_filtered[col] / gdf_census_filtered["total_population"]
+
+# Verify the result
+print(gdf_census_filtered.head())
+
+#now spatial join on our 911 calls df. I want to assign a census tract to each call based on if it intersects with our census geometries. Then, i'll group by census tract, and recover each tracts response time.
+
+# Ensure gdf_census_filtered is a GeoDataFrame and set the geometry
+gdf_census_filtered = gpd.GeoDataFrame(gdf_census_filtered, geometry="geometry")
+
+# Now, check the CRS of both GeoDataFrames
+print("CRS of gdf_census_filtered:", gdf_census_filtered.crs)
+print("CRS of calls_911_geo:", calls_911_geo.crs)
+
+# If they are different, reproject one of them
+if gdf_census_filtered.crs != calls_911_geo.crs:
+    gdf_census_filtered = gdf_census_filtered.to_crs(calls_911_geo.crs)
+
+# Perform the spatial join
+census_tracts_gdf = gdf_census_filtered[["geometry", "tract_number"]]
+
+# Perform the spatial join
+calls_with_census = gpd.sjoin(calls_911_geo, census_tracts_gdf, how="left", predicate="intersects")
+
+# Verify the result
+print(calls_with_census.head())
+
+#now groupby census_tract:
+
+agg_calls_census=calls_with_census.groupby("tract_number")["Time_Diff_Minutes"].mean().reset_index()
+
+#now add the geometry by merging the df with the original census:
+
+# Merge the aggregated data with the original census GeoDataFrame
+agg_calls_census_merged = pd.merge(gdf_census_filtered, agg_calls_census, 
+                                   how="left", 
+                                   on="tract_number")
+
+# Ensure the merged result is a GeoDataFrame
+agg_calls_census_merged = gpd.GeoDataFrame(agg_calls_census_merged, geometry="geometry")
+
+# Check the result
+print(agg_calls_census_merged["Time_Diff_Minutes"].head())
+
+#now plot using altair:
+
+agg_calls_census_merged = agg_calls_census_merged.to_crs("EPSG:4326")
+
+# Convert the geometries to GeoJSON format
+agg_calls_census_merged['geojson'] = agg_calls_census_merged.geometry.apply(lambda x: x.__geo_interface__)
+
+# Create an Altair chart with the geometries and color by 'Time_Diff_Minutes'
+chart = alt.Chart(agg_calls_census_merged).mark_geoshape().encode(
+    color='Time_Diff_Minutes:Q',  # Quantitative encoding for the color scale
+    tooltip=['tract_number:N', 'Time_Diff_Minutes:Q']  # Tooltip with relevant information
+).properties(
+    width=600,
+    height=400
+)
+
+# Show the chart
+chart
+
+
+
+
 ```
 
 # NLP Extra Credit - Name Recognition
