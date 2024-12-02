@@ -382,6 +382,32 @@ chart
 
 ```
 
+# create bones for shiny app:
+
+```{python}
+
+calls_with_census=gpd.sjoin(calls_911_geo,census_tracts_gdf,predicate="intersects",how="left")
+
+calls_with_census_grouped=calls_with_census.groupby(["tract_number","Call Category"]).mean("Time_Diff_Minutes").reset_index()
+
+#drop the useless columns:
+calls_with_census_grouped=calls_with_census_grouped[["tract_number","Call Category","Time_Diff_Minutes"]]
+
+#join using tract number 
+
+calls_type_census = pd.merge(gdf_census_filtered, calls_with_census_grouped, 
+                                   how="left", 
+                                   on="tract_number")
+
+calls_type_census.to_csv("response_times_by_tract_call_type.csv")
+
+calls_type_census.plot(column="Time_Diff_Minutes")
+
+viol_crime=calls_type_census[calls_type_census["Call Category"]=="violent crime"]
+
+viol_crime.plot(column="Time_Diff_Minutes")
+```
+
 # NLP Extra Credit - Name-based Analysis
 Since our dataset from the city of Seattle on food-based businesses does not come with any kind of attribution for these venues, we will be using Natural Language Processing to isolate the food venues likely to serve pizzas. 
 
