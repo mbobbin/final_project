@@ -22,7 +22,7 @@ app_ui = ui.page_fluid(
         label="Choose a type of crime:",
         choices=menu_choices
     ),
-    ui.output_plot("chart"),  # Render Matplotlib plot
+    ui.output_plot("chart",height="800px"),  # Render Matplotlib plot
 )
 
 # Server logic
@@ -51,13 +51,14 @@ def server(input, output, session):
         filtered_data['geometry'] = gpd.GeoSeries.from_wkt(filtered_data['geometry'])
         filtered_data = gpd.GeoDataFrame(filtered_data, geometry="geometry")
         # Create a Matplotlib plot
-        fig, ax = plt.subplots(figsize=(10, 6))
+        fig, ax = plt.subplots(figsize=(15, 9))
 
         # Plot the data as a map using geopandas
         plot = filtered_data.plot(
             column="Time_Diff_Minutes",  # Column to define color
             cmap="Reds",  # Color map
             legend=True,
+            legend_kwds={"label":"Average Response Time (Minutes)"},
             ax=ax
         )
 
@@ -65,11 +66,13 @@ def server(input, output, session):
         ax.set_title("Average Police Response Time by Census Tract", fontsize=16)
         ax.axis("off")  # Turn off the axis for a clean map
 
-        # Customize the legend manually (if needed)
-        legend = ax.get_legend()
-        if legend:
-            legend.set_title("Average Response Time (Minutes)")  # Set legend title
-            legend.set_bbox_to_anchor((1, 0.5))  # Place the legend outside the map
+        # Update legend title after plot
+        # Get the legend (colorbar) from the plot
+        legend = ax.get_children()[0]  # This gets the colorbar
+        legend.set_label("Average Response Time (Minutes)")  # Set legend title
+
+        # Adjust layout to prevent clipping of the legend
+        fig.tight_layout()
 
         return fig  # Return the figure for rendering
 
@@ -78,3 +81,5 @@ app = App(app_ui, server)
 
 if __name__ == "__main__":
     app.run()
+
+
