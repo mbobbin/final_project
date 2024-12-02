@@ -495,7 +495,6 @@ ax.legend(title="Key", loc="upper left", frameon=True, prop={'size': 12})
 ax.set_title("Seattle Pizza Restaurants with 3-mile Delivery Radius")
 ax.axis("off")
 plt.show()
-
 ```
 
 
