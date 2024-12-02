@@ -380,13 +380,10 @@ chart = alt.Chart(agg_calls_census_merged).mark_geoshape().encode(
 # Show the chart
 chart
 
-
-
-
 ```
 
-# NLP Extra Credit - Name Recognition
-Since our dataset from the city of Seattle on food-based businesses does not come with any kind of attribution, we will be using Natural Language Processing to isolate the food venues likely to serve pizzas. 
+# NLP Extra Credit - Name-based Analysis
+Since our dataset from the city of Seattle on food-based businesses does not come with any kind of attribution for these venues, we will be using Natural Language Processing to isolate the food venues likely to serve pizzas. 
 
 ```{python}
 import spacy
