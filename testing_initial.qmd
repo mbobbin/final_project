@@ -476,8 +476,9 @@ police_locations = pd.read_csv("Police_Station_Locations_in_King_County___kcp_lo
 police_locations = police_locations[police_locations["CITY"] == "Seattle"]
 police_locations["full_address"]= police_locations["ADDRESS"] + ", " + police_locations["CITY"] + ", " + police_locations["STATE_NAME"] + ", " + police_locations["ZIPCODE"].astype(str)
 
+# ChatGPT suggested way to convert addresses to point data
 def geocode_address(address):
-    geolocator = Nominatim(user_agent="your_app_name")
+    geolocator = Nominatim(user_agent= "your_app_name")
     location = geolocator.geocode(address)
     if location is None:
         return None
@@ -487,14 +488,14 @@ def geocode_address(address):
 police_locations[["latitude", "longitude"]] = police_locations["full_address"].apply(geocode_address).apply(pd.Series)
 police_gdf = gpd.GeoDataFrame(
     police_locations,
-    geometry= gpd.points_from_xy(police_locations['longitude'], police_locations['latitude'])
+    geometry= gpd.points_from_xy(police_locations["longitude"], police_locations["latitude"])
 )
 police_gdf.crs = "EPSG:4326"
 
 # ensuring that our observations are just within our basemap area
 basemap_dissolved = seatt_basemap.dissolve()
-rest_gdf['within_basemap'] = rest_gdf.geometry.within(basemap_dissolved.geometry[0])
-rest_gdf_filtered = rest_gdf[rest_gdf['within_basemap']]
+rest_gdf["within_basemap"] = rest_gdf.geometry.within(basemap_dissolved.geometry[0])
+rest_gdf_filtered = rest_gdf[rest_gdf["within_basemap"]]
 
 
 # Mapping out our locations
@@ -507,7 +508,7 @@ seatt_basemap.plot(ax= ax, color= "lightgray", edgecolor= "black", alpha= 0.7)
 rest_gdf_filtered.plot(ax= ax, color= "#800000", markersize= 20, label= "Restaurants")
 police_gdf.plot(ax= ax, color= "#000080", marker= "*", markersize= 20, aspect =1, label= "Police Stations")
 
-ax.legend(title="Key", loc="upper left", frameon=True, prop={'size': 12})
+ax.legend(title= "Key", loc= "upper left", frameon= True, prop= {'size': 12})
 ax.set_title("Seattle Pizza Restaurants and Police Station Point Map")
 ax.axis("off")
 plt.show()
@@ -523,8 +524,8 @@ from shapely.geometry import Point, Polygon
 buff_police = police_gdf.copy()
 buff_rest = rest_gdf_filtered.copy()
 
-buff_police['geometry'] = buff_police['geometry'].buffer(0.02)
-buff_rest['geometry'] = buff_rest['geometry'].buffer(0.01)
+buff_police["geometry"] = buff_police["geometry"].buffer(0.02)
+buff_rest["geometry"] = buff_rest["geometry"].buffer(0.01)
 
 # Mapping out our locations
 fig, ax = plt.subplots(figsize=(10, 10))
@@ -538,7 +539,7 @@ police_gdf.plot(ax= ax, color= "#000080", marker= "*", markersize= 20, aspect =1
 buff_rest.plot(ax= ax, color= "#800000", alpha= 0.3, edgecolor= "#800000", linewidth=1 )
 buff_police.plot(ax= ax, color= "#000080", alpha= 0.3, edgecolor= "#000080", linewidth=1 )
 
-ax.legend(title="Key", loc="upper left", frameon=True, prop={'size': 12})
+ax.legend(title= "Key", loc= "upper left", frameon= True, prop={"size": 12})
 ax.set_title("Seattle Pizza Restaurants with 3-mile Delivery Radius and Police with 6 mile range")
 ax.axis("off")
 plt.show()
