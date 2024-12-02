@@ -461,7 +461,6 @@ import matplotlib.pyplot as plt
 from shapely.geometry import Point, Polygon
 from geopy.geocoders import Nominatim
 
-
 # conversion of restaurants to geospatial data
 rest_gdf = gpd.GeoDataFrame(ital_restaurant_df, geometry= gpd.points_from_xy(ital_restaurant_df["Longitude"], ital_restaurant_df["Latitude"]))
 
@@ -492,15 +491,6 @@ police_gdf = gpd.GeoDataFrame(
 )
 police_gdf.crs = "EPSG:4326"
 
-# buffering around our points
-buff_police = police_gdf.copy()
-buff_rest = rest_gdf_filtered.copy()
-police_range = 10 * 1609.34
-rest_range = 5 * 1609.34
-buff_police['geometry'] = buff_police['geometry'].buffer(police_range)
-buff_rest['geometry'] = buff_rest['geometry'].buffer(rest_range)
-
-
 # ensuring that our observations are just within our basemap area
 basemap_dissolved = seatt_basemap.dissolve()
 rest_gdf['within_basemap'] = rest_gdf.geometry.within(basemap_dissolved.geometry[0])
@@ -518,11 +508,40 @@ rest_gdf_filtered.plot(ax= ax, color= "#800000", markersize= 20, label= "Restaur
 police_gdf.plot(ax= ax, color= "#000080", marker= "*", markersize= 20, aspect =1, label= "Police Stations")
 
 ax.legend(title="Key", loc="upper left", frameon=True, prop={'size': 12})
-ax.set_title("Seattle Pizza Restaurants with 3-mile Delivery Radius")
+ax.set_title("Seattle Pizza Restaurants and Police Station Point Map")
 ax.axis("off")
 plt.show()
 ```
 
+# building our delivery range/police precinct ranges
+```{python}
+import geopandas as gpd
+import matplotlib.pyplot as plt
+from shapely.geometry import Point, Polygon
 
+# buffering around our two points sets
+buff_police = police_gdf.copy()
+buff_rest = rest_gdf_filtered.copy()
+
+buff_police['geometry'] = buff_police['geometry'].buffer(0.02)
+buff_rest['geometry'] = buff_rest['geometry'].buffer(0.01)
+
+# Mapping out our locations
+fig, ax = plt.subplots(figsize=(10, 10))
+
+# Plot the Seattle map as the base layer
+seatt_basemap.plot(ax= ax, color= "lightgray", edgecolor= "black", alpha= 0.7)
+
+# Plot both sets of points as circles with the specified radius
+rest_gdf_filtered.plot(ax= ax, color= "#800000", markersize= 20, label= "Restaurants")
+police_gdf.plot(ax= ax, color= "#000080", marker= "*", markersize= 20, aspect =1, label= "Police Stations")
+buff_rest.plot(ax= ax, color= "#800000", alpha= 0.3, edgecolor= "#800000", linewidth=1 )
+buff_police.plot(ax= ax, color= "#000080", alpha= 0.3, edgecolor= "#000080", linewidth=1 )
+
+ax.legend(title="Key", loc="upper left", frameon=True, prop={'size': 12})
+ax.set_title("Seattle Pizza Restaurants with 3-mile Delivery Radius and Police with 6 mile range")
+ax.axis("off")
+plt.show()
+```
 
 
