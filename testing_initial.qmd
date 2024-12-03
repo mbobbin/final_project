@@ -522,11 +522,11 @@ from geopy.geocoders import Nominatim
 rest_gdf = gpd.GeoDataFrame(ital_restaurant_df, geometry= gpd.points_from_xy(ital_restaurant_df["Longitude"], ital_restaurant_df["Latitude"]))
 
 # matching the geospatial reference from earlier
-rest_gdf = rest_gdf.set_crs("EPSG:4326")
+rest_gdf = rest_gdf.set_crs("EPSG:3857", allow_override= True)
 
 # pulling in our census tract-based data as a basemap
 seatt_basemap = agg_calls_census_merged.copy()
-seatt_basemap = seatt_basemap.set_crs("EPSG:4326", inplace= True)
+seatt_basemap = seatt_basemap.set_crs("EPSG:3857", allow_override= True)
 
 # importing police station locations
 police_locations = pd.read_csv("Police_Station_Locations_in_King_County___kcp_loc_point.csv")
@@ -547,7 +547,7 @@ police_gdf = gpd.GeoDataFrame(
     police_locations,
     geometry= gpd.points_from_xy(police_locations["longitude"], police_locations["latitude"])
 )
-police_gdf.crs = "EPSG:4326"
+police_gdf = police_gdf.set_crs("EPSG:3857", allow_override= True)
 
 # ensuring that our observations are just within our basemap area
 basemap_dissolved = seatt_basemap.dissolve()
@@ -563,7 +563,7 @@ seatt_basemap.plot(ax= ax, color= "lightgray", edgecolor= "black", alpha= 0.7)
 
 # Plot the restaurant points as circles with the specified radius
 rest_gdf_filtered.plot(ax= ax, color= "#800000", markersize= 20, label= "Restaurants")
-police_gdf.plot(ax= ax, color= "#000080", marker= "*", markersize= 20, aspect =1, label= "Police Stations")
+police_gdf.plot(ax= ax, color= "#000080", marker= "*", markersize= 20, label= "Police Stations")
 
 ax.legend(title= "Key", loc= "upper left", frameon= True, prop= {'size': 12})
 ax.set_title("Seattle Pizza Restaurants and Police Station Point Map")
@@ -581,6 +581,7 @@ from shapely.geometry import Point, Polygon
 buff_police = police_gdf.copy()
 buff_rest = rest_gdf_filtered.copy()
 
+# 0.02 and 0.01 below represent 6 and 3 miles in decimal degrees
 buff_police["geometry"] = buff_police["geometry"].buffer(0.02)
 buff_rest["geometry"] = buff_rest["geometry"].buffer(0.01)
 
@@ -591,22 +592,17 @@ fig, ax = plt.subplots(figsize=(10, 10))
 seatt_basemap.plot(ax= ax, color= "lightgray", edgecolor= "black", alpha= 0.7)
 
 # Plot both sets of points as circles with the specified radius
+# Restaurants
 rest_gdf_filtered.plot(ax= ax, color= "#800000", markersize= 20, label= "Restaurants")
-
 buff_rest.plot(ax= ax, color= "#800000", alpha= 0.3, edgecolor= "#800000", linewidth=1 )
 
+# Police
+police_gdf.plot(ax= ax, color= "#000080", marker= "*", markersize= 20, label= "Police Stations")
+buff_police.plot(ax= ax, color= "#000080", alpha= 0.3, edgecolor= "#000080", linewidth=1 )
 
+# General legend
 ax.legend(title= "Key", loc= "upper left", frameon= True, prop={"size": 12})
-ax.set_title("Seattle Pizza Restaurants with 3-mile Delivery Radius")
+ax.set_title("Seattle Pizza Restaurants with 3-mile Delivery Radius and Police with 6 mile range")
 ax.axis("off")
 plt.show()
 ```
-
-
-
-
-police_gdf.plot(ax= ax, color= "#000080", marker= "*", markersize= 20, aspect =1, label= "Police Stations")
-buff_police.plot(ax= ax, color= "#000080", alpha= 0.3, edgecolor= "#000080", linewidth=1 )
-
-
- and Police with 6 mile range
