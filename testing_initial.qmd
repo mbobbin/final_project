@@ -419,7 +419,7 @@ import pandas as pd
 restaurant_df = pd.read_csv("Businesses_Food-King_County_20241024.csv")
 nlp = spacy.load("it_core_news_sm")
 # common pizza/Italian restaurant key words and top 20 most common Italian last names (source: https://surnamesinitaly.com/italian-surnames-usa/)
-ital_keywords = ["pizza", "pasta", "risotto","trattoria", "ristorante", "cucina", "italiano", "siciliano", "toscano", "romano", "saltoro", "russo", "marino", "bruno", "rossi", "esposito", "gallo", "caruso", "rizzo", "greco", "giordano", "gabagool", "tony", "soprano"]
+ital_keywords = ["pizza", "pasta", "pastaria", "risotto","trattoria", "ristorante", "cucina", "corso", "italiano", "siciliano", "toscano", "romano", "saltoro", "russo", "marino", "bruno", "rossi", "esposito", "gallo", "caruso", "rizzo", "greco", "giordano", "gabagool", "tony", "soprano"]
 
 # cleaning the names to ease NLP processing
 def clean_text(text):
@@ -535,14 +535,21 @@ seatt_basemap.plot(ax= ax, color= "lightgray", edgecolor= "black", alpha= 0.7)
 
 # Plot both sets of points as circles with the specified radius
 rest_gdf_filtered.plot(ax= ax, color= "#800000", markersize= 20, label= "Restaurants")
-police_gdf.plot(ax= ax, color= "#000080", marker= "*", markersize= 20, aspect =1, label= "Police Stations")
+
 buff_rest.plot(ax= ax, color= "#800000", alpha= 0.3, edgecolor= "#800000", linewidth=1 )
-buff_police.plot(ax= ax, color= "#000080", alpha= 0.3, edgecolor= "#000080", linewidth=1 )
+
 
 ax.legend(title= "Key", loc= "upper left", frameon= True, prop={"size": 12})
-ax.set_title("Seattle Pizza Restaurants with 3-mile Delivery Radius and Police with 6 mile range")
+ax.set_title("Seattle Pizza Restaurants with 3-mile Delivery Radius")
 ax.axis("off")
 plt.show()
 ```
 
 
+
+
+police_gdf.plot(ax= ax, color= "#000080", marker= "*", markersize= 20, aspect =1, label= "Police Stations")
+buff_police.plot(ax= ax, color= "#000080", alpha= 0.3, edgecolor= "#000080", linewidth=1 )
+
+
+ and Police with 6 mile range
