@@ -68,7 +68,7 @@ def server(input, output, session):
         filtered_data['geometry'] = gpd.GeoSeries.from_wkt(filtered_data['geometry'])
         filtered_data = gpd.GeoDataFrame(filtered_data, geometry="geometry")
         # Create a Matplotlib plot
-        fig, ax = plt.subplots(figsize=(15, 9))
+        fig, ax = plt.subplots(figsize=(14, 8))
 
         # Plot the data as a map using geopandas
         plot = filtered_data.plot(
@@ -80,7 +80,7 @@ def server(input, output, session):
         )
 
         # Set title and remove axis for a clean map
-        ax.set_title("Average Police Response Time by Census Tract for Selected Crime", fontsize=16)
+        ax.set_title("Average Police Response Time by Census Tract for Selected Crime", fontsize=14)
         ax.axis("off")  # Turn off the axis for a clean map
 
         # Update legend title after plot
@@ -100,7 +100,7 @@ def server(input, output, session):
         static_data["Time_Diff_Minutes"]=static_data["Time_Diff_Minutes"].astype(float)
         static_data['geometry'] = gpd.GeoSeries.from_wkt(static_data['geometry'])
         static_data=gpd.GeoDataFrame(static_data, geometry="geometry")
-        fig, ax = plt.subplots(figsize=(15, 9))
+        fig, ax = plt.subplots(figsize=(14, 8))
 
     # Plot the static data as a map using GeoPandas
         static_data.plot(
@@ -111,7 +111,7 @@ def server(input, output, session):
         )
 
         # Set title and remove axis for a clean map
-        ax.set_title("Overall Police Response Times by Census Tract", fontsize=16)
+        ax.set_title("Overall Police Response Times by Census Tract", fontsize=14)
         ax.axis("off")  # Turn off the axis for a clean map
 
         # Update legend title after plot
