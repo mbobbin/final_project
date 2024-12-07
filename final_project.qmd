@@ -651,9 +651,7 @@ Plots
 
 ![Our shiny app displays the differences in call response time in Seattle overall with a static plot, and compares that to a dynamic plot where a user can filter based upon the call type. Overall average response time and within call type averages are also displayed for user's reference."](pictures/shiny_app.png){width=80%}
 
-![Our initial plot shows most police stations are located in the southern and central parts of the city. Pizza restaraunts primarily located in the central and northern parts of the city.](pictures/pizza_and_police_map.png){width=40%}
-
-![Our second plot buffers each location to give perspective on the potential coverage of each of the respective entities within a 30 minute drive. We assumed 3 miles for pizza and 6 miles for a police officer.](pictures/pizza_police_radius.png){width=40%}
+![Our initial plot shows most police stations are located in the southern and central parts of the city. Pizza restaraunts primarily located in the central and northern parts of the city.Our second plot buffers each location to give perspective on the potential coverage of each of the respective entities within a 30 minute drive. We assumed 3 miles for pizza and 6 miles for a police officer.](pictures/merged_geospatial_buff.png){width=80%}
 
 Policy Implications 
 

@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Neil Stein, GitHub:neil-stein &amp; Mitch Bobbin, GitHub:mbobbin">
+
+<title>Final Project - Police Versus Pizza Response Times</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="final_project_files/libs/clipboard/clipboard.min.js"></script>
+<script src="final_project_files/libs/quarto-html/quarto.js"></script>
+<script src="final_project_files/libs/quarto-html/popper.min.js"></script>
+<script src="final_project_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="final_project_files/libs/quarto-html/anchor.min.js"></script>
+<link href="final_project_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="final_project_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="final_project_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="final_project_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="final_project_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Final Project - Police Versus Pizza Response Times</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Neil Stein, GitHub:neil-stein &amp; Mitch Bobbin, GitHub:mbobbin </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="initial-data-testing" class="level1">
+<h1>initial data testing</h1>
+</section>
+<section id="data-structure" class="level1">
+<h1>Data Structure</h1>
+<p>5,926,156 unique calls (rows) 13 colums for each observation</p>
+<p>Event Clearance Description appears to indicate what an officer did to resolve a phone call.</p>
+<p>Call Type is nominal but unclear what the dispositions are for some. Priority is a quantitative variable from 1-9. has 712 nas also.</p>
+<p>Initial Call Type is very messy and we could recode. lots of different dispositions that we could aggregate into common categories. Same with Final Call Type. 326 and 436 respectively unique values.</p>
+<p>West, Southwest, East, South, North, and Unknown are the only values for Precinct. There’s 52,381 Unknown entries - not a lot.</p>
+<p>Sector has a number of values that seem to be names? Need to investigate what this means if a data dictionary is handy.</p>
+<p>Quite a few beats also.</p>
+</section>
+<section id="testing-date-time-range" class="level1">
+<h1>testing date-time range</h1>
+</section>
+<section id="initial-data-clean-up" class="level1">
+<h1>initial data clean up</h1>
+</section>
+<section id="creating-new-data---time-differences" class="level1">
+<h1>creating new data - time differences</h1>
+</section>
+<section id="checking-general-average-response-time" class="level1">
+<h1>checking general average response time</h1>
+</section>
+<section id="checking-by-call-type" class="level1">
+<h1>checking by call type</h1>
+</section>
+<section id="average-response-time-by-location" class="level1">
+<h1>average response time by location</h1>
+<p>Final Chart shows that B1, B2, B3, U3, J2, J3, J1, N2, D3, U1, Q2, N3, Q1,U2, C2, D2, L3, L2 all perform worse on response time than the average.</p>
+</section>
+<section id="average-response-time-by-call-type" class="level1">
+<h1>average response time by call type</h1>
+</section>
+<section id="grouping-initial-call-type-for-911-calls" class="level1">
+<h1>grouping initial call type for 911 calls</h1>
+<p>There are 249 unique values for this. It would be nice if we could group in a way that provides some clarity about what kind of calls are receiving fast response and which ones are not. Then we can evaluate if its proportionate to the crime, and we could provide granularity. Maybe even use to filter a map on a dashboard by the response times based upon our new call types</p>
+</section>
+<section id="transposing-over-geographic-data" class="level1">
+<h1>Transposing over geographic data</h1>
+</section>
+<section id="create-bones-for-shiny-app" class="level1">
+<h1>create bones for shiny app:</h1>
+</section>
+<section id="number-of-observations-by-census-tract" class="level1">
+<h1>number of observations by census tract</h1>
+</section>
+<section id="nlp-extra-credit---name-based-analysis" class="level1">
+<h1>NLP Extra Credit - Name-based Analysis</h1>
+<p>Since our dataset from the city of Seattle on food-based businesses does not come with any kind of attribution for these venues, we will be using Natural Language Processing to isolate the food venues likely to serve pizzas.</p>
+</section>
+<section id="geo-locating-pizza-venues-and-mapping-response-windows" class="level1">
+<h1>Geo-locating pizza venues and mapping response windows</h1>
+<p>Per our research, the average restaurant delivery time is 28.18 minutes for this type of food (https://doi.org/10.1016/j.trip.2023.100891). In the city of Seattle specifically, delivery drivers indicate that their average range driving for a delivery is 5 miles (https://www.ridesharingforum.com/t/comparing-ubereats-doordash-and-postmates-in-seattle-wa/292). This finding is fairly comparable to other data from similar cities like Atlanta, GA (https://opposite-lock.com/topic/5441/the-data-of-driving-for-doordash)</p>
+</section>
+<section id="building-our-delivery-rangepolice-precinct-ranges" class="level1">
+<h1>building our delivery range/police precinct ranges</h1>
+</section>
+<section id="buffer-area-calulcations" class="level1">
+<h1>buffer area calulcations</h1>
+</section>
+<section id="write-up" class="level1">
+<h1>Write-Up</h1>
+<p>Research Question</p>
+<p>Our research question was whether or not police response times are truly slower than pizza delivery times, as the old American social trope suggests. We also sought to evaluate if the recovered response times are reasonable and explore what that discrepancy could mean to policymakers.</p>
+<p>Approach/Methodology</p>
+<p>We acquired a large dataset on police call responses from the Vera Institute of Justice, and chose to focus on one of their sample cities, Seattle. The initial Seattle dataset contained approximately 5 million observations, with each observation one call placed to the police, the initial purpose, time, and resolution. Our analysis narrowed in on approximately 2 million observations by focusing on just 911 calls as these are emergencies which would require the swift action we wished to observe. Other observations in the data included non-emergency police contact, and officers that were already on-site to respond to a crime. These aren’t as relevant as 911 calls because they either are self-selected by the public as being non-emergencies or are a result of the effectiveness of police patrols respectively. The main variables we focused on are the response time in minutes, the initial call disposition, latitude, and longitude.</p>
+<p>We then were able to use census tract data to identify from which census tract a call originated via spatial merge. We used this to group by census tract and align relevant demographic information from each tract. Initially, we explored on too granular a level with our analysis to find any discernable differences among different census tracts and response times. However, after reviewing the census summary data and noting that Seattle has a far greater proportion of the city identifying as White, we concluded that bifurcating the data along the intracity average ‘whiteness’ could serve as a comparison of areas that are whiter than average vs more diverse than average in terms of police response times.</p>
+<p>We also used Seattle food-based business license data to evaluate the distribution of pizza restaurants in the city, creating that dataset by using NLP to filter &amp; identify Italian restaurants by training Spacy on Italian names &amp; restaurant naming styles. We geolocated the listed business addresses and joined these locations with the existing police precinct locations to create a buffered plot that shows the potential delivery area coverage of pizza restaurants throughout the city and of the police precincts. We had some difficulty converting the data to the appropriate CRS at one point so that we could plot the desired 3-mile radius around pizza restaurants and 6 miles around police stations, so approximations for the relevant units (decimal degrees) had to be used.</p>
+<p>Plots</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="pictures/race_chart_line.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption>This plot shows the different average response times by call types that exist between more diverse and less diverse census tracts. A red line is displayed to show the overall average response time within Seattle.</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="pictures/shiny_app.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption>Our shiny app displays the differences in call response time in Seattle overall with a static plot, and compares that to a dynamic plot where a user can filter based upon the call type. Overall average response time and within call type averages are also displayed for user’s reference.”</figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="pictures/merged_geospatial_buff.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption>Our initial plot shows most police stations are located in the southern and central parts of the city. Pizza restaraunts primarily located in the central and northern parts of the city.Our second plot buffers each location to give perspective on the potential coverage of each of the respective entities within a 30 minute drive. We assumed 3 miles for pizza and 6 miles for a police officer.</figcaption>
+</figure>
+</div>
+<p>Policy Implications</p>
+<p>Our findings helped show a link between slower response times and police precinct placement in Seattle. Additionally, we found that more diverse neighborhoods had faster response times. Through comparison with pizza restaurants, we sought to show that emergency police response times generally are too slow. Policymakers should think carefully about precinct placement throughout municipalities to minimize these differences and reduce police response times. An additional policy implication from these results is that emergency response is hampered by calls to police that do not necessarily require an emergency response, policymakers could also consider public awareness campaigns so residents are more aware of other city services that can address road safety concerns, downed trees, etc., concerns that are currently handled by police.</p>
+<p>Future Work</p>
+<p>One of the key findings that we had was that the police response time lags significantly depending on the type of call they believe they are responding to, however our data also indicates that the initial call characterization and the final report given by the responding officer often differ, and in many cases differ in matters of life &amp; death. There were cases where, for example, a call was initially labeled as a noise complaint, but the final report indicated that it was a case of domestic violence. Given that the latter type of incident can be fatal, further research should explore the frequency of this consequential change.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
