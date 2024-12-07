@@ -610,9 +610,6 @@ ax.axis("off")
 plt.show()
 ```
 
-# Write-Up
-
-![Image caption](\chart_w_average.png)
 
 # buffer area calulcations
 ```{python}
@@ -633,3 +630,35 @@ uncovered_area = (uncovered_area * 1609.34)
 total_uncovered_area = (abs(uncovered_area.sum()))/1000
 print(f"Total Uncovered Area: {total_uncovered_area:.2f} sq miles")
 ```
+
+# Write-Up
+
+Research Question 
+
+Our research question was whether or not police response times are truly slower than pizza delivery times, as the old American social trope suggests. We also sought to evaluate if the recovered response times are reasonable and explore what that discrepancy could mean to policymakers. 
+
+Approach/Methodology 
+
+We acquired a large dataset on police call responses from the Vera Institute of Justice, and chose to focus on one of their sample cities, Seattle. The initial Seattle dataset contained approximately 5 million observations, with each observation one call placed to the police, the initial purpose, time, and resolution. Our analysis narrowed in on approximately 2 million observations by focusing on just 911 calls as these are emergencies which would require the swift action we wished to observe. Other observations in the data included non-emergency police contact, and officers that were already on-site to respond to a crime. These aren’t as relevant as 911 calls because they either are self-selected by the public as being non-emergencies or are a result of the effectiveness of police patrols respectively. The main variables we focused on are the response time in minutes, the initial call disposition, latitude, and longitude. 
+
+We then were able to use census tract data to identify from which census tract a call originated via spatial merge. We used this to group by census tract and align relevant demographic information from each tract. Initially, we explored on too granular a level with our analysis to find any discernable differences among different census tracts and response times. However, after reviewing the census summary data and noting that Seattle has a far greater proportion of the city identifying as White, we concluded that bifurcating the data along the intracity average ‘whiteness’ could serve as a comparison of areas that are whiter than average vs more diverse than average in terms of police response times.  
+
+We also used Seattle food-based business license data to evaluate the distribution of pizza restaurants in the city, creating that dataset by using NLP to filter & identify Italian restaurants by training Spacy on Italian names & restaurant naming styles. We geolocated the listed business addresses and joined these locations with the existing police precinct locations to create a buffered plot that shows the potential delivery area coverage of pizza restaurants throughout the city and of the police precincts. We had some difficulty converting the data to the appropriate CRS at one point so that we could plot the desired 3-mile radius around pizza restaurants and 6 miles around police stations, so approximations for the relevant units (decimal degrees) had to be used.  
+
+Plots 
+
+![This plot shows the different average response times by call types that exist between more diverse and less diverse census tracts. A red line is displayed to show the overall average response time within Seattle.](pictures/race_chart_line.png){width=80%}
+
+![Our shiny app displays the differences in call response time in Seattle overall with a static plot, and compares that to a dynamic plot where a user can filter based upon the call type. Overall average response time and within call type averages are also displayed for user's reference."](pictures/shiny_app.png){width=80%}
+
+![Our initial plot shows most police stations are located in the southern and central parts of the city. Pizza restaraunts primarily located in the central and northern parts of the city.](pictures/pizza_and_police_map.png){width=40%}
+
+![Our second plot buffers each location to give perspective on the potential coverage of each of the respective entities within a 30 minute drive. We assumed 3 miles for pizza and 6 miles for a police officer.](pictures/pizza_police_radius.png){width=40%}
+
+Policy Implications 
+
+Our findings helped show a link between slower response times and police precinct placement in Seattle. Additionally, we found that more diverse neighborhoods had faster response times. Through comparison with pizza restaurants, we sought to show that emergency police response times generally are too slow. Policymakers should think carefully about precinct placement throughout municipalities to minimize these differences and reduce police response times. An additional policy implication from these results is that emergency response is hampered by calls to police that do not necessarily require an emergency response, policymakers could also consider public awareness campaigns so residents are more aware of other city services that can address road safety concerns, downed trees, etc., concerns that are currently handled by police. 
+
+Future Work 
+
+One of the key findings that we had was that the police response time lags significantly depending on the type of call they believe they are responding to, however our data also indicates that the initial call characterization and the final report given by the responding officer often differ, and in many cases differ in matters of life & death. There were cases where, for example, a call was initially labeled as a noise complaint, but the final report indicated that it was a case of domestic violence. Given that the latter type of incident can be fatal, further research should explore the frequency of this consequential change.  
