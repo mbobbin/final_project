@@ -1,6 +1,11 @@
 ---
-title: "Testing the Data"
+title: "Final Project - Police Versus Pizza Response Times"
+author: "Neil Stein, GitHub:neil-stein & Mitch Bobbin, GitHub:mbobbin"
 format: html
+execute:
+  echo: false
+  eval: false
+
 ---
 
 # initial data testing
@@ -164,7 +169,7 @@ avg_response_line = alt.Chart(emergency_response_time_df).mark_rule(color="red")
 
 chart_w_average=chart_beat_911+avg_response_line
 chart_w_average.show()
-chart_w_average.save("chart_w_average.png",format="png")
+
 ```
 
 Final Chart shows that B1, B2, B3, U3, J2, J3, J1, N2, D3, U1, Q2, N3, Q1,U2, C2, D2, L3, L2 all perform worse on response time than the average.
@@ -248,7 +253,6 @@ call_category_chart2 = alt.Chart(calls_911).mark_bar().encode(
 )
 
 call_category_chart2.show()
-call_category_chart2.save("call_category_chart2.png",format="png")
 #Now I want to transpose this over census, and geographic data
 ```
 
@@ -461,7 +465,6 @@ histogram = (
     )
 )
 
-histogram.save("histogram.png",format="png")
 
 ```
 
@@ -602,4 +605,7 @@ ax.axis("off")
 plt.show()
 ```
 
+# Write-Up
+
+![Image caption](\chart_w_average.png)
 
