@@ -1,6 +1,6 @@
 ---
 title: "Final Project - Police Versus Pizza Response Times"
-author: "Neil Stein, GitHub:neil-stein & Mitch Bobbin, GitHub:mbobbin"
+author: "Neil Stein, GitHub:neil-stein & Mitch Bobbin, GitHub:mbobbin, DAP Section 1"
 format: html
 execute:
   echo: false
