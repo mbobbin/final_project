@@ -15,12 +15,13 @@ Further, we examined the difference among the different call types to examine wh
 <img width="937" height="959" alt="image" src="https://github.com/user-attachments/assets/6620c2c9-cfc1-4667-a53a-5f1aa1b541d5" />
 
 Next, we examined how police responses varied based upon the demographics of where the call was originating. Since Seattle is a whiter than average city, we deemed a census tract as more diverse on average than the rest of the city or whiter than average to the rest of the city to explore how race may also play a role within these categories.
-<img width="553" height="377" alt="image" src="https://github.com/user-attachments/assets/6bd495c6-16cf-47d4-99ba-8bc4f5e3691a" />
+
+<img width="1100" height="800" alt="image" src="https://github.com/user-attachments/assets/6bd495c6-16cf-47d4-99ba-8bc4f5e3691a" />
 
 We found that whiter than average census tracts had slower than average police response times across all call types, and much slower than the response time for the same type of calls compared to more diverse neighborhoods. We postulate that there is probably some overpolicing happening in these more diverse neighbhorhoods to explain this disparity.
 
 We further built a shiny app to allow a user to explore the variation among response times with regard to where in the city the call originates, and compare it to the average response time in that neighborhood generally.
-<img width="521" height="281" alt="image" src="https://github.com/user-attachments/assets/0d3a6791-b96c-4009-a7ab-10a830702ef2" />
+<img width="1100" height="500" alt="image" src="https://github.com/user-attachments/assets/0d3a6791-b96c-4009-a7ab-10a830702ef2" />
 
 We then look to explore the distribution of pizza restarants throughout the city, and police stations which can give one an idea of how the dispatching of these officers may be limited geographically. The distribution of pizza restaurants heavily favors northern parts of Seattle, away from the demographically diverse southern part of the city
 Police station distributions are clustered in the center of the city, near UW and financial district. There's fewer stations in industrial and lower-income neighborhoods
